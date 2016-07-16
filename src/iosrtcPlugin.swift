@@ -51,7 +51,10 @@ class iosrtcPlugin : CDVPlugin {
 		NSLog("iosrtcPlugin#onReset() | doing nothing")
 	}
 
-    func takeScreenShot(command: CDVInvokedUrlCommand){
+    
+    func recordScreenShot(){
+        
+        
         UIGraphicsBeginImageContextWithOptions(self.webView!.bounds.size, true, 0)
         let childViews = self.webView!.superview?.subviews
         for childview in childViews!{
@@ -64,13 +67,50 @@ class iosrtcPlugin : CDVPlugin {
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        let imageData = UIImageJPEGRepresentation(image, 0.2)
+        self.screenShots.append(image);
+        NSLog("grabbed %i", self.screenShots.count);
+        if self.screenShotsEnabled == true {
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.03 * Double(NSEC_PER_SEC)))
+            
+            dispatch_after(delayTime, self.queue) {
+                [weak self] in
+                self?.recordScreenShot()
+                
+            }
+        }
         
-        let resultImageString = imageData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
-        let base64ImageDataUrl: String = String(format:"data:image/jpeg;base64,%@", resultImageString);
-        NSLog(" image data: %@", resultImageString)
-        let result:CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: base64ImageDataUrl )
+    }
+    
+    func takeScreenShot(command: CDVInvokedUrlCommand){
+        self.screenShotsEnabled=true;
+        dispatch_async(self.queue) {
+            [weak self] in
+            self?.recordScreenShot()
+            
+        }
+        
+        let result:CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: "screen shots started")
         self.emit(command.callbackId,result: result);
+    }
+    
+    func stopScreenShot(command: CDVInvokedUrlCommand){
+        self.screenShotsEnabled=false;
+        
+        for screenShotImage in self.screenShots{
+            
+            let imageData = UIImageJPEGRepresentation(screenShotImage, 0.75)
+            
+            let resultImageString = imageData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+            NSLog(" image data: %@", resultImageString)
+            
+            let result:CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: resultImageString)
+            self.emit(command.callbackId,result: result);
+        }
+        dispatch_async(self.queue) {
+            [weak self] in
+            
+            self?.screenShots.removeAll()
+        }
     }
 
 

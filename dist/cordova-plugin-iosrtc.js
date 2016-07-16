@@ -2366,7 +2366,9 @@ module.exports = {
 	dump:                  dump,
  
  // Taking screen shot of webview and returning as an image data uri
- takeScreenShot:        takeScreenShot
+ takeScreenShot:        takeScreenShot,
+ // Taking screen shot of webview and returning as an image data uri
+ stopScreenShot:        stopScreenShot
 };
 
 
@@ -2382,7 +2384,12 @@ domready(function () {
  exec(okResult, null, 'iosrtcPlugin', 'takeScreenShot', []);
  
  };
+ function stopScreenShot(okResult) {
  
+ debug('stopScreenShot');
+ exec(okResult, null, 'iosrtcPlugin', 'stopScreenShot', []);
+ 
+ };
 
 function refreshVideos() {
 	debug('refreshVideos()');
