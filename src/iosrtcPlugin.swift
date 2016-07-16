@@ -18,6 +18,10 @@ class iosrtcPlugin : CDVPlugin {
 	var pluginMediaStreamRenderers: [Int : PluginMediaStreamRenderer]!
 	// Dispatch queue for serial operations.
 	var queue: dispatch_queue_t!
+    // ScreenShots array
+    var screenShots:[UIImage]!
+    // screenShotsEnables
+    var screenShotsEnabled: Bool!
 
 
 	// This is just called if <param name="onload" value="true" /> in plugin.xml.
@@ -33,6 +37,8 @@ class iosrtcPlugin : CDVPlugin {
 		pluginMediaStreamRenderers = [:]
 		queue = dispatch_queue_create("cordova-plugin-iosrtc", DISPATCH_QUEUE_SERIAL)
 		pluginRTCPeerConnections = [:]
+        screenShots=[]
+        screenShotsEnabled=false
 
 		// Initialize DTLS stuff.
 		RTCPeerConnectionFactory.initializeSSL()
