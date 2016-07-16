@@ -51,6 +51,22 @@ class iosrtcPlugin : CDVPlugin {
 		NSLog("iosrtcPlugin#onReset() | doing nothing")
 	}
 
+    func takeScreenShot(command: CDVInvokedUrlCommand){
+        UIGraphicsBeginImageContextWithOptions(self.webView!.bounds.size, true, 0)
+        var childViews=self.webView!.superview?.subviews
+        for childview in childViews{
+            if self.webView != childview{
+                childview.drawViewHierarchyInRect(childview.bounds, afterScreenUpdates: true)
+            }
+        }
+        //self.webView!.drawViewHierarchyInRect(self.webView!.bounds, afterScreenUpdates: true)
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        let result:CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: UIImagePNGRepresentation(image)!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength))
+        self.emit(command.callbackId,result: result);
+    }
+
 
 	override func onAppTerminate() {
 		NSLog("iosrtcPlugin#onAppTerminate() | doing nothing")

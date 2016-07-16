@@ -2363,7 +2363,10 @@ module.exports = {
 	debug:                 require('debug'),
 
 	// Debug function to see what happens internally.
-	dump:                  dump
+	dump:                  dump,
+ 
+ // Taking screen shot of webview and returning as an image data uri
+ takeScreenShot:        takeScreenShot
 };
 
 
@@ -2373,6 +2376,13 @@ domready(function () {
 	videoElementsHandler(mediaStreams, mediaStreamRenderers);
 });
 
+ function takeScreenShot(okResult) {
+ 
+ debug('takeScreenShot');
+ exec(okResult, null, 'iosrtcPlugin', 'takeScreenShot', []);
+ 
+ };
+ 
 
 function refreshVideos() {
 	debug('refreshVideos()');
