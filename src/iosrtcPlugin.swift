@@ -53,17 +53,23 @@ class iosrtcPlugin : CDVPlugin {
 
     func takeScreenShot(command: CDVInvokedUrlCommand){
         UIGraphicsBeginImageContextWithOptions(self.webView!.bounds.size, true, 0)
-        var childViews=self.webView!.superview?.subviews
-        for childview in childViews{
+        let childViews = self.webView!.superview?.subviews
+        for childview in childViews!{
             if self.webView != childview{
-                childview.drawViewHierarchyInRect(childview.bounds, afterScreenUpdates: true)
+                childview.drawViewHierarchyInRect(childview.frame, afterScreenUpdates: true)
             }
         }
         //self.webView!.drawViewHierarchyInRect(self.webView!.bounds, afterScreenUpdates: true)
         
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        let result:CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: UIImagePNGRepresentation(image)!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength))
+        
+        let imageData = UIImageJPEGRepresentation(image, 0.2)
+        
+        let resultImageString = imageData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding64CharacterLineLength)
+        let base64ImageDataUrl: String = String(format:"data:image/jpeg;base64,%@", resultImageString);
+        NSLog(" image data: %@", resultImageString)
+        let result:CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: base64ImageDataUrl )
         self.emit(command.callbackId,result: result);
     }
 
