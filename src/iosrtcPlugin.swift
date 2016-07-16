@@ -75,8 +75,8 @@ class iosrtcPlugin : CDVPlugin {
         
         self.screenShots.append(image);
         NSLog("grabbed %i", self.screenShots.count);
-        if self.screenShotsEnabled == true {
-            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.03 * Double(NSEC_PER_SEC)))
+        if self.screenShotsEnabled == true && self.screenShots.count < 100{
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC)))
             
             dispatch_after(delayTime, self.queue) {
                 [weak self] in
