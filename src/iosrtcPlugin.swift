@@ -96,6 +96,7 @@ class iosrtcPlugin : CDVPlugin {
         }
         
         let result:CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: "screen shots started")
+        
         self.emit(command.callbackId,result: result);
     }
     
@@ -110,6 +111,7 @@ class iosrtcPlugin : CDVPlugin {
             NSLog(" image data: %@", resultImageString)
             
             let result:CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: resultImageString)
+            result.setKeepCallbackAsBool(true);
             self.emit(command.callbackId,result: result);
         }
         dispatch_async(self.queue) {
